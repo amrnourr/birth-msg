@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <title>Birthday</title>
+    <style>
+        * {
+            transition: .5s;
+        }
+
+        body {
+            background: #000;
+            margin: 0;
+        }
+
+        .container {
+            background-image: url("https://images.unsplash.com/photo-1489861518096-4d12b732e831?fm=jpg&w=3000&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxleHBsb3JlLWZlZWR8MTd8fHxlbnwwfHx8fHw%3D");
+            background-size: cover;
+            width: 100%;
+            height: 100vh;
+        }
+
+        .age {
+            position: absolute;
+            top: 15%;
+            left: 50%;
+            width: max-content;
+            transform: translateX(-50%);
+            font-family: sans-serif;
+            font-size: 20px;
+            color: #ffb37e;
+            text-shadow: 1px 1px 0 white;
+        }
+
+        .name {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: white;
+            font-size: 100px;
+            width: max-content;
+            font-style: italic;
+        }
+
+        .msg {
+            position: absolute;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            color: white;
+            font-size: 20px;
+            font-family: monospace;
+        }
+
+        footer {
+            background: #2b2933;
+            padding: 20px;
+            color: #ffb37e;
+            font-size: larger;
+            font-variant: small-caps;
+        }
+
+        button {
+            position: absolute;
+            right: 30px;
+            bottom: 30px;
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            font-weight: bold;
+            font-size: 40px;
+            color: #15374c;
+            font-family: sans-serif;
+            background: cadetblue;
+            border: none;
+            outline: none;
+            cursor: pointer;
+
+            &:hover {
+                filter: brightness(85%);
+            }
+        }
+
+        .add {
+            display: none;
+            position: absolute;
+            top: 0;
+            width: 100%;
+            height: 100vh;
+            background: #00000080;
+
+            & form {
+                display: flex;
+                justify-content: space-between;
+                flex-direction: column;
+                position: absolute;
+                top: 50%;
+                left: 50%;
+                transform: translate(-50%, -50%);
+                width: 250px;
+                height: 100px;
+                padding: 50px;
+                background: white;
+                border-radius: 30px;
+
+                & input {
+                    height: 20px;
+                    padding: 5px 10px;
+                    border-radius: 20px;
+                    border: none;
+                    outline: none;
+                    background: #ddd;
+                }
+
+                .btns {
+                    display: flex;
+                    justify-content: space-between;
+
+                    & input {
+                        width: calc(50% - 5px);
+                        background: cadetblue;
+                        height: fit-content;
+                        cursor: pointer;
+                        color: #fff;
+
+                        &:hover {
+                            filter: brightness(85%);
+                        }
+                    }
+                }
+            }
+        }
+
+        .display {
+            opacity: 0;
+        }
+
+        .toggle {
+            display: block;
+        }
+
+        .rotate {
+            transform: rotate(45deg);
+        }
+
+        @media (max-width: 767px) {
+          .container .age {
+            width: fit-content;
+          }
+
+          .container .msg {
+            font-size: 17px;
+          }
+
+          .add form {
+            width: 50%;
+          }
+        }
+    </style>
+</head>
+
+<body>
+    <h1 class="name">Name</h1>
+    <div class="container display">
+        <div class="age"></div>
+        <div class="msg">Click '+' To Add Name</div>
+    </div>
+    <footer class="display">Made By: Amr</footer>
+    <div class="add">
+        <form method="get">
+            <input type="text" placeholder="Name" maxlength="15" name="n" autocomplete="off" required />
+            <input type="date" name="bd" required />
+            <div class="btns">
+                <input type="reset" />
+                <input type="submit" />
+            </div>
+        </form>
+    </div>
+    <button class="display">+</button>
+    <script>
+        setTimeout(() => {
+            document.querySelectorAll(".display").forEach((el) => {
+                el.style.opacity = 1;
+            });
+            document.querySelector(".name").style.color = "#15374c";
+        }, 3000);
+
+        document.querySelector("button").onclick = () => {
+            document.querySelector(".add").classList.toggle("toggle");
+            document.querySelector("button").classList.toggle("rotate");
+        };
+
+        function calculateAge(dateOfBirth) {
+            const now = new Date();
+            const birthDate = new Date(dateOfBirth);
+
+            let years = now.getFullYear() - birthDate.getFullYear(),
+                months = now.getMonth() - birthDate.getMonth(),
+                days = now.getDate() - birthDate.getDate(),
+                hours = now.getHours() - birthDate.getHours(),
+                minutes = now.getMinutes() - birthDate.getMinutes(),
+                seconds = now.getSeconds() - birthDate.getSeconds();
+
+            if (months < 0) {
+                years--;
+                months += 12;
+            } if (days < 0) {
+                months--;
+                const lastMonth = new Date(now.getFullYear(), now.getMonth(), 0);
+                days += lastMonth.getDate();
+            } if (hours < 0) {
+                days--;
+                hours += 24;
+            } if (minutes < 0) {
+                hours--;
+                minutes += 60;
+            } if (seconds < 0) {
+                minutes--;
+                seconds += 60;
+            }
+
+            return {
+                years,
+                months,
+                days,
+                hours,
+                minutes,
+                seconds
+            };
+        }
+
+        let params = new URL(location.href).searchParams;
+        let queryParams = {};
+        for ([key, value] of params.entries()) {
+            queryParams[key] = value;
+        }
+
+        if (location.href.includes('&')) {
+            setInterval(() => {
+                const birthDate = queryParams.bd;
+                const age = calculateAge(birthDate);
+                document.querySelector('.age').textContent = `${age.years} years, ${age.months} months, ${age.days} days, ${age.hours} hours, ${age.minutes} minutes, ${age.seconds} seconds`;
+            });
+            document.querySelector(".name").textContent = queryParams.n;
+            document.title = `It's Your Birthday ${queryParams.n}`;
+            document.querySelector(".msg").textContent = `Happy Birthday ${queryParams.n}!`;
+        }
+
+        document.querySelector('.add form input').addEventListener('input', e => {
+            if (!/^[a-zA-Z0-9\s]*$/.test(e.target.value)) {
+                document.querySelector('.add form input').value = e.target.value.replace(/[^a-zA-Z0-9\s]/g, '');;
+            }
+        });
+    </script>
+</body>
+
+</html>
